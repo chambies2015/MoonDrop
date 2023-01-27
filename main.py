@@ -181,6 +181,8 @@ async def on_message(message):
             embed.add_field(name="", value=emote7)
             embed.add_field(name="", value=emote8)
             embed.add_field(name="", value=emote9)
+            author = message.author.name
+            embed.set_footer(text=author)
             await message.channel.send(embed=embed)
         else:
             embed = discord.Embed(title="Slot Machine Results", color=0x00ff00)
@@ -193,7 +195,9 @@ async def on_message(message):
             embed.add_field(name="", value=emote7)
             embed.add_field(name="", value=emote8)
             embed.add_field(name="", value=emote9)
-            embed.set_footer(text="This message will be deleted in 10 seconds.")
+            author = message.author.name
+            embed.set_footer(text="This message will be deleted in 10 seconds. Roller: " + author)
+
             sent_message = await message.channel.send(embed=embed)
             await asyncio.sleep(10)
             await message.delete()
