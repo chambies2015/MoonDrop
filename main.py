@@ -170,7 +170,7 @@ async def on_message(message):
                 or emote1 == emote4 == emote7 or emote2 == emote5 == emote8 or emote3 == emote6 == emote9\
                 or emote1 == emote5 == emote9 or emote3 == emote5 == emote7:
 
-            embed = discord.Embed(title="Slot Machine Results", color=0x00ff00)
+            embed = discord.Embed(title="Slot Machine Results", color=0xf1c40f)
             embed.description = "WINNER!"
             embed.add_field(name="Reel 1", value=emote1)
             embed.add_field(name="Reel 2", value=emote2)
@@ -184,8 +184,23 @@ async def on_message(message):
             author = message.author.name
             embed.set_footer(text=author)
             await message.channel.send(embed=embed)
+        elif emote1 == emote2 == emote3 == emote4 == emote5 == emote6 == emote7 == emote8 == emote9:
+            embed = discord.Embed(title="Slot Machine Results", color=0xe74c3c)
+            embed.description = "GIGA WINNER!"
+            embed.add_field(name="Reel 1", value=emote1)
+            embed.add_field(name="Reel 2", value=emote2)
+            embed.add_field(name="Reel 3", value=emote3)
+            embed.add_field(name="", value=emote4)
+            embed.add_field(name="", value=emote5)
+            embed.add_field(name="", value=emote6)
+            embed.add_field(name="", value=emote7)
+            embed.add_field(name="", value=emote8)
+            embed.add_field(name="", value=emote9)
+            author = message.author.name
+            embed.set_footer(text=author)
+            await message.channel.send(embed=embed)
         else:
-            embed = discord.Embed(title="Slot Machine Results", color=0x00ff00)
+            embed = discord.Embed(title="Slot Machine Results", color=0x3498db)
             embed.add_field(name="Reel 1", value=emote1)
             embed.add_field(name="Reel 2", value=emote2)
             embed.add_field(name="Reel 3", value=emote3)
