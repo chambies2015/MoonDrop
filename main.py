@@ -4,7 +4,6 @@ from discord.ext import commands
 import requests
 import bot_token
 import random
-import openpyxl
 
 # client = discord.Client(intents=discord.Intents.all())
 
@@ -64,6 +63,7 @@ async def on_message(message):
         await sent_message.delete()
 
     elif message.content.startswith("!slots"):
+
         slot_options = ["<:binoculars:939664762491514940>",
                         "<a:cocka:939664777838469141>",
                         "<a:CopiumTime:939664788995321946>",
@@ -191,8 +191,9 @@ async def on_message(message):
             embed.add_field(name="", value=emote7)
             embed.add_field(name="", value=emote8)
             embed.add_field(name="", value=emote9)
+            embed.set_footer(text="This message will be deleted in 10 seconds.")
             sent_message = await message.channel.send(embed=embed)
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
             await message.delete()
             await sent_message.delete()
 
