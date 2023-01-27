@@ -183,6 +183,7 @@ async def on_message(message):
             author = message.author.name
             embed.set_footer(text=author)
             await message.channel.send(embed=embed)
+            await message.channel.send("@everyone")
         elif emote1 == emote2 == emote3 == emote4 == emote5 == emote6 == emote7 == emote8 == emote9:
             embed = discord.Embed(title="Slot Machine Results: GIGA WINNER!!!!!!!!!!", color=0xe74c3c)
             embed.description = "GIGA WINNER!"
@@ -198,6 +199,7 @@ async def on_message(message):
             author = message.author.name
             embed.set_footer(text=author)
             await message.channel.send(embed=embed)
+            await message.channel.send("@everyone")
         else:
             embed = discord.Embed(title="Slot Machine Results", color=0x3498db)
             embed.add_field(name="Reel 1", value=emote1)
