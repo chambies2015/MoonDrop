@@ -1,10 +1,12 @@
 import asyncio
+import os
+
 import discord
 from discord.ext import commands
 import requests
 import bot_token
 import random
-
+import youtube_dl
 # client = discord.Client(intents=discord.Intents.all())
 
 WEATHER_EMOTES = {
@@ -197,6 +199,9 @@ async def on_message(message):
             await message.delete()
             await sent_message.delete()
 
+
+    # Code to get all emotes in the respective server where !emotes is used.
+    # You will need to change the slot_options variable for each discord it's used in.
     # elif message.content.startswith("!emotes"):
     #     print(f'Logged in as {client.user}')
     #     for guild in client.guilds:
