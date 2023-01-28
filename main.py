@@ -64,7 +64,7 @@ async def on_message(message):
         await message.delete()
         await sent_message.delete()
 
-    elif message.content.startswith("!slots") and message.channel.id == 1068400883316052008:
+    elif message.content.startswith("!slots") and message.channel.id in gambling_channels:
 
         slot_options = ["<:binoculars:939664762491514940>", "<a:cocka:939664777838469141>",
                         "<a:CopiumTime:939664788995321946>", "<:Corpa:939664800483508245>",
@@ -187,7 +187,7 @@ async def on_message(message):
     elif message.content.startswith("!commands") and message.channel.id in gambling_channels:
         await message.channel.send('!slots\n!blackjack')
 
-    elif message.content.startswith("!blackjack"):
+    elif message.content.startswith("!blackjack") and message.channel.id in gambling_channels:
         author = message.author
 
         def calculate_hand(hand):
