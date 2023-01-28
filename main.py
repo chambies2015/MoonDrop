@@ -1,12 +1,10 @@
 import asyncio
-import os
-
 import discord
 from discord.ext import commands
 import requests
 import bot_token
 import random
-import youtube_dl
+
 # client = discord.Client(intents=discord.Intents.all())
 
 WEATHER_EMOTES = {
@@ -64,7 +62,7 @@ async def on_message(message):
         await message.delete()
         await sent_message.delete()
 
-    elif message.content.startswith("!slots"):
+    elif message.content.startswith("!slots") and message.channel.id == 1068400883316052008:
 
         slot_options = ["<:binoculars:939664762491514940>",
                         "<a:cocka:939664777838469141>",
@@ -212,11 +210,9 @@ async def on_message(message):
             embed.add_field(name="", value=emote8)
             embed.add_field(name="", value=emote9)
             author = message.author.name
-            embed.set_footer(text="This message will be deleted in 10 seconds. Roller: " + author)
+            embed.set_footer(text="Roller: " + author)
             sent_message = await message.channel.send(embed=embed)
-            await asyncio.sleep(10)
-            await message.delete()
-            await sent_message.delete()
+            await asyncio.sleep(5)
 
 
     # Code to get all emotes in the respective server where !emotes is used.
