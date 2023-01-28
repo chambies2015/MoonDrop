@@ -164,8 +164,8 @@ async def on_message(message):
         emote8 = slot_result[7]
         emote9 = slot_result[8]
 
-        if emote1 == emote2 == emote3 or emote4 == emote5 == emote6 or emote7 == emote8 == emote9\
-                or emote1 == emote4 == emote7 or emote2 == emote5 == emote8 or emote3 == emote6 == emote9\
+        if emote1 == emote2 == emote3 or emote4 == emote5 == emote6 or emote7 == emote8 == emote9 \
+                or emote1 == emote4 == emote7 or emote2 == emote5 == emote8 or emote3 == emote6 == emote9 \
                 or emote1 == emote5 == emote9 or emote3 == emote5 == emote7:
 
             embed = discord.Embed(title="Slot Machine Results: WINNER!", color=0xf1c40f)
@@ -210,10 +210,11 @@ async def on_message(message):
             embed.add_field(name="", value=emote8)
             embed.add_field(name="", value=emote9)
             author = message.author.name
-            embed.set_footer(text="Roller: " + author)
+            odds = (len(slot_options) ** 3) / 9
+            odds = round(odds, 0)
+            embed.set_footer(text="Roller: " + author + "\nOdds of winning are: 1 in " + str(odds))
             sent_message = await message.channel.send(embed=embed)
             await asyncio.sleep(5)
-
 
     # Code to get all emotes in the respective server where !emotes is used.
     # You will need to change the slot_options variable for each discord it's used in.
@@ -223,6 +224,93 @@ async def on_message(message):
     #         print(f'{guild.name} has {len(guild.emojis)} emotes.')
     #         for emoji in guild.emojis:
     #             print(f'{emoji.name}: {emoji.id}')
+
+    elif message.content.startswith("!commands") and message.channel.id == 1068400883316052008:
+        await message.channel.send('!slots\n!blackjack')
+
+    elif message.content.startswith("!blackjack"):
+        author = message.author
+
+        def calculate_hand(hand):
+            score = 0
+            aces = 0
+            for card in hand:
+                if card in ['J', 'Q', 'K']:
+                    score += 10
+                elif card == 'A':
+                    score += 11
+                    aces += 1
+                else:
+                    score += int(card)
+
+            while score > 21 and aces > 0:
+                score -= 10
+                aces -= 1
+            return score
+
+        cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+        player_hand = [random.choice(cards), random.choice(cards)]
+        dealer_hand = [random.choice(cards), random.choice(cards)]
+
+        player_score = calculate_hand(player_hand)
+        dealer_score = calculate_hand(dealer_hand)
+
+        embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
+        embed.add_field(name="Your hand: ", value=f'{player_hand} ({player_score}) ')
+        await message.channel.send(embed=embed)
+        embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
+        embed.add_field(name="Dealer\'s hand: ", value=f'{dealer_hand[0]} ***')
+        await message.channel.send(embed=embed)
+
+        if message.author == author:
+            while player_score < 21:
+                response = await client.wait_for('message', check=lambda message: message.author == author)
+                if response.content.lower() == 'hit':
+                    player_hand.append(random.choice(cards))
+                    player_score = calculate_hand(player_hand)
+                    await message.channel.send(f'Your hand: {player_hand} ({player_score})')
+                elif response.content.lower() == 'stand':
+                    break
+                else:
+                    await message.channel.send('Invalid command. Please enter "hit" or "stand".')
+
+            if player_score > 21:
+                await message.channel.send('Bust! You lose.')
+            else:
+                while dealer_score < 17:
+                    dealer_hand.append(random.choice(cards))
+                    dealer_score = calculate_hand(dealer_hand)
+
+                embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
+                embed.add_field(name="Dealer\'s hand: ", value=f'{dealer_hand} ({dealer_score})')
+                await message.channel.send(embed=embed)
+
+                if dealer_score > 21:
+                    await message.channel.send('Dealer busts! You win.')
+                elif player_score > dealer_score:
+                    await message.channel.send('You win!')
+                elif player_score < dealer_score:
+                    await message.channel.send('You lose.')
+                else:
+                    await message.channel.send('It\'s a tie!')
+        else:
+            message.channel.send("Game already in progress, please wait your turn to play.")
+
+    def calculate_hand(hand):
+        score = 0
+        aces = 0
+        for card in hand:
+            if card in ['J', 'Q', 'K']:
+                score += 10
+            elif card == 'A':
+                score += 11
+                aces += 1
+            else:
+                score += int(card)
+
+        while score > 21 and aces > 0:
+            score -= 10
+            aces -= 1
 
 
 client.run(bot_token.bot_token)
