@@ -1,26 +1,10 @@
 import asyncio
 import discord
 from discord.ext import commands
-import requests
 import bot_token
 import random
 
-# client = discord.Client(intents=discord.Intents.all())
 
-WEATHER_EMOTES = {
-    "clear sky": "☀️",
-    "few clouds": "⛅️",
-    "scattered clouds": "☁️",
-    "broken clouds": "☁️",
-    "shower rain": "🌧️",
-    "rain": "🌧️",
-    "thunderstorm": "⛈️",
-    "snow": "❄️",
-    "mist": "🌫️",
-    "overcast": "☁",
-    "overcast clouds": "☁",
-    "light snow": "❄"
-}
 gambling_slots_odds = True
 gambling_channels = [689221546224386100, 1068400883316052008]
 
@@ -30,40 +14,6 @@ client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 @client.event
 async def on_message(message):
     global gambling_slots_odds
-    if message.content.startswith("!weather"):
-
-        location = message.content[9:]
-        api_key = bot_token.open_weather_token
-
-        if location.isnumeric() and len(location) == 5:
-            weather_url = f"http://api.openweathermap.org/data/2.5/weather?zip={location},us&appid={api_key}"
-
-        else:
-            weather_url = f"http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}"
-
-        weather_data = requests.get(weather_url).json()
-
-        if 'message' in weather_data:
-            if weather_data['message'] == 'city not found':
-                sent_message = await message.channel.send(
-                    "Invalid location. Please enter a valid 5-digit US zip code or city name.")
-                await asyncio.sleep(10)
-                await message.delete()
-                await sent_message.delete()
-                return
-        temp = weather_data["main"]["temp"]
-        temp_fahrenheit = (temp - 273.15) * 9 / 5 + 32
-        description = weather_data["weather"][0]["description"]
-        emote = WEATHER_EMOTES.get(description, "🌦️")
-        embed = discord.Embed(title="Weather Information", color=0x00ff00)
-        embed.add_field(name="Location", value=location)
-        embed.add_field(name="Description", value=f"{emote} {description}")
-        embed.add_field(name="Temperature (F)", value=f"{temp_fahrenheit:.2f}")
-        embed.set_footer(text="This message will be deleted in 10 seconds.")
-        sent_message = await message.channel.send(embed=embed)
-        await asyncio.sleep(10)
-        await message.delete()
-        await sent_message.delete()
 
     if message.content.startswith("!max") and message.author.id == 179025046872784896:
         gambling_slots_odds = True
@@ -136,7 +86,7 @@ async def on_message(message):
                                 "<a:PepeHmm:941579601384198224>", "<a:BOOBIES:941579601719750676>",
                                 "<a:dankHackermans:941579601820385291>", "<a:boomies:941579603682689024>",
                                 "<:Gasm:945139193334616094>", "<:PotL:948628546086113361>",
-                                "<:AYAYARRR:948635232905596938>","<a:monkaGIGAftRobertDowneyJr:969671522732109834>",
+                                "<:AYAYARRR:948635232905596938>", "<a:monkaGIGAftRobertDowneyJr:969671522732109834>",
                                 "<:peepoPonderingBeans:996964477780115486>", "<:Suswokege:1009206863423873094>",
                                 "<a:borpaSpin:1015069879663067177>", "<:peepoPonderingPOB:1021167542712139846>",
                                 "<:handshakge:1027413028234330192>", "<a:rasadgan:1031726958087782442>",
