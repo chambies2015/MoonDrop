@@ -286,15 +286,21 @@ async def on_message(message):
                 await message.channel.send(embed=embed)
 
                 if dealer_score > 21:
-                    await message.channel.send('Dealer busts! You win.')
+                    embed = discord.Embed(title='Dealer busts! You win.', color=0x3498db)
+                    await message.channel.send(embed=embed)
                 elif player_score > dealer_score:
-                    await message.channel.send('You win!')
+                    embed = discord.Embed(title='You win!', color=0x3498db)
+                    await message.channel.send(embed=embed)
                 elif player_score < dealer_score:
-                    await message.channel.send('You lose.')
+                    embed = discord.Embed(title='You lose.', color=0x3498db)
+                    await message.channel.send(embed=embed)
                 else:
-                    await message.channel.send('It\'s a tie!')
+                    embed = discord.Embed(title='It\'s a tie!', color=0x3498db)
+                    await message.channel.send(embed=embed)
+
         else:
-            message.channel.send("Game already in progress, please wait your turn to play.")
+            embed = discord.Embed(title="Game already in progress, please wait your turn to play.", color=0x3498db)
+            await message.channel.send(embed=embed)
 
     def calculate_hand(hand):
         score = 0
