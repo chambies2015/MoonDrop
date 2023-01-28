@@ -261,21 +261,5 @@ async def on_message(message):
             embed = discord.Embed(title="Game already in progress, please wait your turn to play.", color=0x3498db)
             await message.channel.send(embed=embed)
 
-    def calculate_hand(hand):
-        score = 0
-        aces = 0
-        for card in hand:
-            if card in ['J', 'Q', 'K']:
-                score += 10
-            elif card == 'A':
-                score += 11
-                aces += 1
-            else:
-                score += int(card)
-
-        while score > 21 and aces > 0:
-            score -= 10
-            aces -= 1
-
 
 client.run(bot_token.bot_token)
