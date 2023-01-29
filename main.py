@@ -1,4 +1,6 @@
 import asyncio
+import sqlite3
+
 import discord
 from discord.ext import commands
 import bot_token
@@ -10,10 +12,37 @@ gambling_channels = [689221546224386100, 1068400883316052008]
 
 client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 
+@client.event
+async def on_ready():
+    print("Logged in as {0.user}".format(client))
+    conn = sqlite3.connect("MoonDropCasino.db")
+    c = conn.cursor()
+    c.execute(
+        "CREATE TABLE IF NOT EXISTS ChipTracker (id INTEGER PRIMARY KEY, chips INTEGER)"
+    )
+    conn.commit()
+    # c.execute("INSERT INTO ChipTracker (id, chips) VALUES ('Hello, World!')")
+    # conn.commit()
+    # c.execute("SELECT * FROM ChipTracker")
+    # print(c.fetchone())
+    conn.close()
 
 @client.event
 async def on_message(message):
     global gambling_slots_odds
+
+    conn = sqlite3.connect("MoonDropCasino.db")
+    c = conn.cursor()
+    c.execute("SELECT id FROM ChipTracker")
+    sqlResults = c.fetchall()
+    listOfMembers = []
+    # check if user has an account in the casino database. If not, create one for them and give them starting chips.
+    for member in sqlResults:
+        listOfMembers.append(int(member[0]))
+    memberID = message.author.id
+    if memberID not in listOfMembers:
+        c.execute(f"INSERT INTO ChipTracker (id, chips) VALUES ({message.author.id}, 5000)")
+        conn.commit()
 
     if message.content.startswith("!max") and message.author.id == 179025046872784896:
         gambling_slots_odds = True
