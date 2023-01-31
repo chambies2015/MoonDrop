@@ -10,7 +10,7 @@ free_gambling = True
 slots_buy_in = 20
 blackjack_buy_in = 10
 flip_buy_in = 10
-gambling_channels = [689221546224386100, 1068400883316052008, 809544965386272792]
+gambling_channels = [809544965386272792]
 slotWinAmount = 2000
 gigaSlotWinAmount = 100000
 
@@ -112,7 +112,7 @@ async def on_message(message):
         for member in sqlResults:
             listOfMembers.append(int(member[0]))
         memberID = message.author.id
-        if memberID not in listOfMembers:
+        if memberID not in listOfMembers and message.channel.id in gambling_channels:
             c.execute(f"INSERT INTO ChipTracker (id, chips) VALUES ({message.author.id}, 5000)")
             conn.commit()
 
@@ -173,9 +173,9 @@ async def on_message(message):
                     else:
                         odds = (len(reduced_slot_options) ** 3) / 8
                         odds = round(odds, 0)
-                    embed.set_footer(text="Roller: " + author + "\nOdds of winning are: 1 in " + str(odds))
+                    embed.set_footer(text="Roller: " + author + "\nOdds of winning are: 1 in " + str(odds) + "\n"
+                                                                                                             f"You won {str(slotWinAmount)} chips!")
                     await message.channel.send(embed=embed)
-                    await message.channel.send("@" + message.author.name + f" has won {str(slotWinAmount)} chips!")
                     addChips(message.author.id, slotWinAmount)
                 elif emote1 == emote2 == emote3 == emote4 == emote5 == emote6 == emote7 == emote8 == emote9:
                     embed = discord.Embed(title="Slot Machine Results: 🎉🎉 GIGA WINNER! 🎉🎉", color=0xe74c3c)
@@ -198,10 +198,9 @@ async def on_message(message):
                     else:
                         odds = (len(reduced_slot_options) ** 3) / 8
                         odds = round(odds, 0)
-                    embed.set_footer(text="Roller: " + author + "\nOdds of winning are: 1 in " + str(odds))
+                    embed.set_footer(text="Roller: " + author + "\nOdds of winning are: 1 in " + str(odds) + "\n"
+                                                                                                             f"You won {str(gigaSlotWinAmount)} chips!")
                     await message.channel.send(embed=embed)
-                    await message.channel.send("@" + message.author.name + f" has giga won slots and"
-                                                                           f" {str(gigaSlotWinAmount)} chips!")
                     addChips(message.author.id, gigaSlotWinAmount)
                 else:
                     embed = discord.Embed(title="Slot Machine Results", color=0x3498db)
@@ -223,7 +222,8 @@ async def on_message(message):
                     else:
                         odds = (len(reduced_slot_options) ** 3) / 8
                         odds = round(odds, 0)
-                    embed.set_footer(text="Roller: " + author + "\nOdds of winning are: 1 in " + str(odds))
+                    embed.set_footer(text="Roller: " + author + "\nOdds of winning are: 1 in " + str(odds) + f"\nYou lost"
+                                                                                                             f" {slots_buy_in} chips.")
                     subChips(message.author.id, slots_buy_in)
                     await message.channel.send(embed=embed)
 
@@ -277,7 +277,9 @@ async def on_message(message):
                         await message.channel.send('Invalid command. Please enter "hit" or "stand".')
 
                 if player_score > 21:
-                    await message.channel.send('Bust! You lose.')
+                    embed = discord.Embed(title='You lose.', color=0x3498db)
+                    embed.set_footer(text=f"You lost {blackjack_buy_in} chips.")
+                    await message.channel.send(embed=embed)
                     subChips(message.author.id, blackjack_buy_in)
                 else:
                     while dealer_score < 17:
@@ -290,14 +292,17 @@ async def on_message(message):
 
                     if dealer_score > 21:
                         embed = discord.Embed(title='Dealer busts! You win.', color=0x3498db)
+                        embed.set_footer(text=f"You won {blackjack_buy_in * 2} chips.")
                         await message.channel.send(embed=embed)
                         addChips(message.author.id, blackjack_buy_in)
                     elif player_score > dealer_score:
                         embed = discord.Embed(title='You win!', color=0x3498db)
+                        embed.set_footer(text=f"You won {blackjack_buy_in * 2} chips.")
                         await message.channel.send(embed=embed)
                         addChips(message.author.id, blackjack_buy_in)
                     elif player_score < dealer_score:
                         embed = discord.Embed(title='You lose.', color=0x3498db)
+                        embed.set_footer(text=f"You lost {blackjack_buy_in} chips.")
                         await message.channel.send(embed=embed)
                         subChips(message.author.id, blackjack_buy_in)
                     else:
@@ -313,10 +318,12 @@ async def on_message(message):
             flippedCoin = random.choice(coin)
             if flippedCoin == 0:
                 embed = discord.Embed(title="You won the flip!", color=0x00ff00)
+                embed.set_footer(text=f"You won {flip_buy_in * 2} chips.")
                 await message.channel.send(embed=embed)
                 addChips(message.author.id, flip_buy_in)
             else:
                 embed = discord.Embed(title="You lost the flip!", color=0x00ff00)
+                embed.set_footer(text=f"You lost {flip_buy_in} chips.")
                 await message.channel.send(embed=embed)
                 subChips(message.author.id, flip_buy_in)
 
@@ -332,13 +339,15 @@ async def on_message(message):
         elif message.content.startswith("!leaderboard") and message.channel.id in gambling_channels:
             conn = sqlite3.connect("MoonDropCasino.db")
             c = conn.cursor()
-            c.execute("SELECT id, chips FROM ChipTracker")
+            c.execute("SELECT id, chips FROM ChipTracker order by chips desc")
             queryResult = c.fetchall()
             embed = discord.Embed(title="Current Leaderboard:", color=0xf1c40f)
+            rank = 1
             for result in queryResult:
                 user = await client.fetch_user(result[0])
-                embed.add_field(name=f"{user}", value= f"{result[1]}")
+                embed.add_field(name=f"#{str(rank)}: {user}", value=f"{result[1]}")
                 embed.add_field(name="", value='\n', inline=False)
+                rank += 1
             await message.channel.send(embed=embed)
 
             conn.close()
