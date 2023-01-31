@@ -1,13 +1,12 @@
 import asyncio
 import sqlite3
-
 import discord
 from discord.ext import commands
 import bot_token
 import random
 
 
-gambling_slots_odds = True
+gambling_slots_odds = False
 gambling_channels = [689221546224386100, 1068400883316052008]
 
 client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
@@ -292,5 +291,6 @@ async def on_message(message):
             embed = discord.Embed(title="Game already in progress, please wait your turn to play.", color=0x3498db)
             await message.channel.send(embed=embed)
 
+    conn.close()
 
 client.run(bot_token.bot_token)
