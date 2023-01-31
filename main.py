@@ -9,7 +9,7 @@ free_gambling = True
 slots_buy_in = 20
 blackjack_buy_in = 10
 flip_buy_in = 10
-gambling_channels = [809544965386272792]
+gambling_channels = [1068400883316052008, 689221546224386100]
 slotWinAmount = 2000
 gigaSlotWinAmount = 100000
 
@@ -228,18 +228,19 @@ async def on_message(message):
 
         elif message.content.startswith("!commands") and message.channel.id in gambling_channels:
             embed = discord.Embed(title=f"Command List:\n", color=0x3498db)
-            embed.add_field(name="!slots", value="")
+            embed.add_field(name="", value="!slots")
             embed.add_field(name="", value='\n', inline=False)
-            embed.add_field(name="!blackjack", value="")
+            embed.add_field(name="", value="!blackjack")
             embed.add_field(name="", value='\n', inline=False)
-            embed.add_field(name="!balance", value="")
+            embed.add_field(name="", value="!balance")
             embed.add_field(name="", value='\n', inline=False)
-            embed.add_field(name="!flip", value="")
+            embed.add_field(name="", value="!flip")
             embed.add_field(name="", value='\n', inline=False)
-            embed.add_field(name="!buyins", value="")
+            embed.add_field(name="", value="!buyins")
             embed.add_field(name="", value='\n', inline=False)
-            embed.add_field(name="!leaderboard", value="")
+            embed.add_field(name="", value="!leaderboard")
             embed.add_field(name="", value='\n', inline=False)
+            await message.channel.send(embed=embed)
 
         elif message.content.startswith("!blackjack") and message.channel.id in gambling_channels:
             author = message.author
