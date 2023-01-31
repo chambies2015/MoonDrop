@@ -1,4 +1,3 @@
-import asyncio
 import sqlite3
 import discord
 from discord.ext import commands
@@ -228,7 +227,19 @@ async def on_message(message):
                     await message.channel.send(embed=embed)
 
         elif message.content.startswith("!commands") and message.channel.id in gambling_channels:
-            await message.channel.send('!slots\n!blackjack\n!commands\n!balance\n!flip\n!buyins\n!leaderboard')
+            embed = discord.Embed(title=f"Command List:\n", color=0x3498db)
+            embed.add_field(name="!slots", value="")
+            embed.add_field(name="", value='\n', inline=False)
+            embed.add_field(name="!blackjack", value="")
+            embed.add_field(name="", value='\n', inline=False)
+            embed.add_field(name="!balance", value="")
+            embed.add_field(name="", value='\n', inline=False)
+            embed.add_field(name="!flip", value="")
+            embed.add_field(name="", value='\n', inline=False)
+            embed.add_field(name="!buyins", value="")
+            embed.add_field(name="", value='\n', inline=False)
+            embed.add_field(name="!leaderboard", value="")
+            embed.add_field(name="", value='\n', inline=False)
 
         elif message.content.startswith("!blackjack") and message.channel.id in gambling_channels:
             author = message.author
