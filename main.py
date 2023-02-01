@@ -262,82 +262,92 @@ async def on_message(message):
                     aces -= 1
                 return score
 
-            cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-            player_hand = [random.choice(cards), random.choice(cards)]
-            dealer_hand = [random.choice(cards), random.choice(cards)]
+            userChips = getUserChips(message.author.id)
+            if userChips < blackjack_buy_in:
+                embed = discord.Embed(title="Not enough chips to play Blackjack!", color=0x00ff00)
+                await message.channel.send(embed=embed)
+            else:
+                cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+                player_hand = [random.choice(cards), random.choice(cards)]
+                dealer_hand = [random.choice(cards), random.choice(cards)]
 
-            player_score = calculate_hand(player_hand)
-            dealer_score = calculate_hand(dealer_hand)
+                player_score = calculate_hand(player_hand)
+                dealer_score = calculate_hand(dealer_hand)
 
-            embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
-            embed.add_field(name="Your hand: ", value=f'{player_hand} ({player_score}) ')
-            await message.channel.send(embed=embed)
-            embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
-            embed.add_field(name="Dealer\'s hand: ", value=f'{dealer_hand[0]} ***')
-            await message.channel.send(embed=embed)
+                embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
+                embed.add_field(name="Your hand: ", value=f'{player_hand} ({player_score}) ')
+                await message.channel.send(embed=embed)
+                embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
+                embed.add_field(name="Dealer\'s hand: ", value=f'{dealer_hand[0]} ***')
+                await message.channel.send(embed=embed)
 
-            if message.author == author:
-                while player_score < 21:
-                    response = await client.wait_for('message', check=lambda message: message.author == author)
-                    if response.content.lower() == 'hit':
-                        player_hand.append(random.choice(cards))
-                        player_score = calculate_hand(player_hand)
-                        await message.channel.send(f'Your hand: {player_hand} ({player_score})')
-                    elif response.content.lower() == 'stand':
-                        break
-                    else:
-                        await message.channel.send('Invalid command. Please enter "hit" or "stand".')
+                if message.author == author:
+                    while player_score < 21:
+                        response = await client.wait_for('message', check=lambda message: message.author == author)
+                        if response.content.lower() == 'hit':
+                            player_hand.append(random.choice(cards))
+                            player_score = calculate_hand(player_hand)
+                            await message.channel.send(f'Your hand: {player_hand} ({player_score})')
+                        elif response.content.lower() == 'stand':
+                            break
+                        else:
+                            await message.channel.send('Invalid command. Please enter "hit" or "stand".')
 
-                if player_score > 21:
-                    embed = discord.Embed(title='You lose.', color=0x3498db)
-                    embed.set_footer(text=f"You lost {blackjack_buy_in} chips.")
-                    await message.channel.send(embed=embed)
-                    subChips(message.author.id, blackjack_buy_in)
-                else:
-                    while dealer_score < 17:
-                        dealer_hand.append(random.choice(cards))
-                        dealer_score = calculate_hand(dealer_hand)
-
-                    embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
-                    embed.add_field(name="Dealer\'s hand: ", value=f'{dealer_hand} ({dealer_score})')
-                    await message.channel.send(embed=embed)
-
-                    if dealer_score > 21:
-                        embed = discord.Embed(title='Dealer busts! You win.', color=0x3498db)
-                        embed.set_footer(text=f"You won {blackjack_buy_in * 2} chips.")
-                        await message.channel.send(embed=embed)
-                        addChips(message.author.id, blackjack_buy_in * 2)
-                    elif player_score > dealer_score:
-                        embed = discord.Embed(title='You win!', color=0x3498db)
-                        embed.set_footer(text=f"You won {blackjack_buy_in * 2} chips.")
-                        await message.channel.send(embed=embed)
-                        addChips(message.author.id, blackjack_buy_in * 2)
-                    elif player_score < dealer_score:
+                    if player_score > 21:
                         embed = discord.Embed(title='You lose.', color=0x3498db)
                         embed.set_footer(text=f"You lost {blackjack_buy_in} chips.")
                         await message.channel.send(embed=embed)
                         subChips(message.author.id, blackjack_buy_in)
                     else:
-                        embed = discord.Embed(title='It\'s a push!', color=0x3498db)
+                        while dealer_score < 17:
+                            dealer_hand.append(random.choice(cards))
+                            dealer_score = calculate_hand(dealer_hand)
+
+                        embed = discord.Embed(title=f"{message.author.name}'s Blackjack", color=0x3498db)
+                        embed.add_field(name="Dealer\'s hand: ", value=f'{dealer_hand} ({dealer_score})')
                         await message.channel.send(embed=embed)
 
-            else:
-                embed = discord.Embed(title="Game already in progress, please wait your turn to play.", color=0x3498db)
-                await message.channel.send(embed=embed)
+                        if dealer_score > 21:
+                            embed = discord.Embed(title='Dealer busts! You win.', color=0x3498db)
+                            embed.set_footer(text=f"You won {blackjack_buy_in} chips.")
+                            await message.channel.send(embed=embed)
+                            addChips(message.author.id, blackjack_buy_in)
+                        elif player_score > dealer_score:
+                            embed = discord.Embed(title='You win!', color=0x3498db)
+                            embed.set_footer(text=f"You won {blackjack_buy_in} chips.")
+                            await message.channel.send(embed=embed)
+                            addChips(message.author.id, blackjack_buy_in)
+                        elif player_score < dealer_score:
+                            embed = discord.Embed(title='You lose.', color=0x3498db)
+                            embed.set_footer(text=f"You lost {blackjack_buy_in} chips.")
+                            await message.channel.send(embed=embed)
+                            subChips(message.author.id, blackjack_buy_in)
+                        else:
+                            embed = discord.Embed(title='It\'s a push!', color=0x3498db)
+                            await message.channel.send(embed=embed)
+
+                else:
+                    embed = discord.Embed(title="Game already in progress, please wait your turn to play.", color=0x3498db)
+                    await message.channel.send(embed=embed)
 
         elif message.content.startswith("!flip") and message.channel.id in gambling_channels:
-            coin = [0, 1]
-            flippedCoin = random.choice(coin)
-            if flippedCoin == 0:
-                embed = discord.Embed(title="You won the flip!", color=0x00ff00)
-                embed.set_footer(text=f"You won {flip_buy_in * 2} chips.")
+            userChips = getUserChips(message.author.id)
+            if userChips < flip_buy_in:
+                embed = discord.Embed(title="Not enough chips to flip!", color=0x00ff00)
                 await message.channel.send(embed=embed)
-                addChips(message.author.id, flip_buy_in * 2)
             else:
-                embed = discord.Embed(title="You lost the flip!", color=0x00ff00)
-                embed.set_footer(text=f"You lost {flip_buy_in} chips.")
-                await message.channel.send(embed=embed)
-                subChips(message.author.id, flip_buy_in)
+                coin = [0, 1]
+                flippedCoin = random.choice(coin)
+                if flippedCoin == 0:
+                    embed = discord.Embed(title="You won the flip!", color=0x00ff00)
+                    embed.set_footer(text=f"You won {flip_buy_in} chips.")
+                    await message.channel.send(embed=embed)
+                    addChips(message.author.id, flip_buy_in)
+                else:
+                    embed = discord.Embed(title="You lost the flip!", color=0x00ff00)
+                    embed.set_footer(text=f"You lost {flip_buy_in} chips.")
+                    await message.channel.send(embed=embed)
+                    subChips(message.author.id, flip_buy_in)
 
         elif message.content.startswith("!balance") and message.channel.id in gambling_channels:
             userBalance = getUserChips(message.author.id)
