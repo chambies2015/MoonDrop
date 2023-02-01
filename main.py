@@ -7,8 +7,8 @@ import random
 gambling_slots_odds = False
 free_gambling = True
 slots_buy_in = 20
-blackjack_buy_in = 10
-flip_buy_in = 10
+blackjack_buy_in = 50
+flip_buy_in = 50
 gambling_channels = [1068400883316052008, 689221546224386100]
 slotWinAmount = 2000
 gigaSlotWinAmount = 100000
@@ -306,12 +306,12 @@ async def on_message(message):
                         embed = discord.Embed(title='Dealer busts! You win.', color=0x3498db)
                         embed.set_footer(text=f"You won {blackjack_buy_in * 2} chips.")
                         await message.channel.send(embed=embed)
-                        addChips(message.author.id, blackjack_buy_in)
+                        addChips(message.author.id, blackjack_buy_in * 2)
                     elif player_score > dealer_score:
                         embed = discord.Embed(title='You win!', color=0x3498db)
                         embed.set_footer(text=f"You won {blackjack_buy_in * 2} chips.")
                         await message.channel.send(embed=embed)
-                        addChips(message.author.id, blackjack_buy_in)
+                        addChips(message.author.id, blackjack_buy_in * 2)
                     elif player_score < dealer_score:
                         embed = discord.Embed(title='You lose.', color=0x3498db)
                         embed.set_footer(text=f"You lost {blackjack_buy_in} chips.")
@@ -332,7 +332,7 @@ async def on_message(message):
                 embed = discord.Embed(title="You won the flip!", color=0x00ff00)
                 embed.set_footer(text=f"You won {flip_buy_in * 2} chips.")
                 await message.channel.send(embed=embed)
-                addChips(message.author.id, flip_buy_in)
+                addChips(message.author.id, flip_buy_in * 2)
             else:
                 embed = discord.Embed(title="You lost the flip!", color=0x00ff00)
                 embed.set_footer(text=f"You lost {flip_buy_in} chips.")
